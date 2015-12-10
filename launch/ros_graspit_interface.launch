@@ -1,6 +1,6 @@
 <launch>
   <node name="graspit_ros" pkg="graspit" type="graspit" args="-p libros_graspit_interface" output="screen">
     <env name="GRASPIT" value="$(find graspit)/graspit_source"/>
-    <env name="GRASPIT_PLUGIN_DIR" value="/home/jvarley/ros/graspit_moveit_plugin_ws/devel/lib"/>
+    <env name="GRASPIT_PLUGIN_DIR" value="$(find graspit_moveit_plugin)/../../devel/lib"/>
   </node>
 </launch>

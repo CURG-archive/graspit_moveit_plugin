@@ -37,6 +37,7 @@
 
 #include <map>
 #include <QObject>
+#include <QtGui>
 
 //GraspIt! includes
 #include <include/plugin.h>
@@ -53,6 +54,7 @@ class GraspableBody;
 #include <manipulation_msgs/GraspPlanning.h>
 
 #include "include/planning_scene_msg_builder.h"
+#include "grasp_msg_publisher.h"
 
 namespace graspit_ros_planning
 {
@@ -64,7 +66,7 @@ namespace graspit_ros_planning
   Provides a number of ROS services that directly operate on the GraspIt world, such as loading objects or
   obstacles, simulating 3D scans of objects, etc.
 
-  In particular, note that this class uses the mainLoop() function to perform the ROS even management calls.
+  In particular, note that this class uses the mainLoop() function to perform the ROS event management calls.
 */
 class RosGraspitInterface : public QObject, public Plugin
 {
@@ -79,6 +81,8 @@ private:
   ros::NodeHandle *priv_nh_;
 
   PlanningSceneMsgBuilder *mPlanningSceneBuilder;
+  GraspMsgPublisher *mPickupActionGoalBuilder;
+  QComboBox *cb;
 
 public:
   //! Inits ROS, but (for now) without passing any arguments
@@ -93,6 +97,7 @@ public:
   public Q_SLOTS:
 
       void onSendPlanningSceneButtonPressed();
+      void onExecuteGraspButtonPressed();
 
 };
 

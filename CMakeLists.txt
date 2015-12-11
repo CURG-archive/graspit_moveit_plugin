@@ -19,7 +19,8 @@ find_package(catkin REQUIRED COMPONENTS
     graspit
     actionlib
     moveit_msgs
-    moveit_ros_planning_interface)
+    moveit_ros_planning_interface
+    graspit_msgs)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -120,22 +121,16 @@ set(SOURCES
      src/main.cpp
      src/ros_graspit_interface.cpp
      src/planning_scene_msg_builder.cpp
-     src/pickup_action_goal_builder.cpp
-
-     ui/moveit_action_goal_dlg.cpp)
+     src/grasp_msg_publisher.cpp)
 
 set(HEADERS
      include/planning_scene_msg_builder.h
-     include/pickup_action_goal_builder.h)
+     include/grasp_msg_publisher.h)
 
 set(MOCS
-     include/ros_graspit_interface.h
-    ui/moveit_action_goal_dlg.h)
+     include/ros_graspit_interface.h)
 
-set(UIS
-    ui/moveit_action_goal_dlg.ui)
 
-qt4_wrap_ui(GENERATED_SOURCES ${UIS})
 qt4_wrap_cpp(GENERATED_SOURCES ${MOCS})
 
 source_group("Generated Sources - Do Not Edit" FILES ${GENERATED_SOURCES})

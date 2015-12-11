@@ -4,7 +4,8 @@
 #include "graspit_source/include/graspitGUI.h"
 #include "graspit_source/include/body.h"
 #include "graspit_source/include/triangle.h"
-void verticesToMeshMsg(shape_msgs::Mesh &mesh, std::vector<position> *vertices, std::vector<Triangle> *triangles)
+
+void meshToMeshMsg(shape_msgs::Mesh &mesh, std::vector<position> *vertices, std::vector<Triangle> *triangles)
 {
     int vertice_count = 0;
     for (int i =0 ; i < triangles->size(); i++)
@@ -79,7 +80,7 @@ bool PlanningSceneMsgBuilder::createCollisionMesh(Body *b, moveit_msgs::Collisio
   b->getGeometryTriangles(&triangles);
 
   shape_msgs::Mesh mesh;
-  verticesToMeshMsg(mesh, &vertices, &triangles);
+  meshToMeshMsg(mesh, &vertices, &triangles);
 
   collision_obj.meshes.push_back(mesh);
 

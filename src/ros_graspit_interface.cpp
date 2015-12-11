@@ -58,7 +58,7 @@
 #include <include/grasp.h>
 #include <include/triangle.h>
 #include <geometry_msgs/Point.h>
-#include <QtGui>
+
 #include <thread>
 
 
@@ -111,6 +111,7 @@ int RosGraspitInterface::init(int argc, char **argv)
   priv_nh_ = new ros::NodeHandle("~");
 
   mPlanningSceneBuilder = new PlanningSceneMsgBuilder();
+  mPickupActionGoalBuilder = new GraspMsgPublisher(root_nh_);
 
   ROS_INFO("Using node name %s", node_name.c_str());
   for (int i = 0; i < argc; i++)
@@ -119,20 +120,28 @@ int RosGraspitInterface::init(int argc, char **argv)
   }
   delete ros_argv;
 
-
   ROS_INFO("MAKING SHAPE COMPLETION UI");
-
-  QPushButton * sendPlanningSceneButton = new QPushButton("send Scene");
-
-  sendPlanningSceneButton->setDefault(true);
 
   QDialogButtonBox *controlBox = new QDialogButtonBox(Qt::Vertical);
 
-  controlBox->addButton(sendPlanningSceneButton, QDialogButtonBox::ActionRole);
+  QPushButton * sendPlanningSceneButton = new QPushButton("send Scene", controlBox);
+  sendPlanningSceneButton->setDefault(true);
+  sendPlanningSceneButton->move(0,0);
+
+  cb = new QComboBox(controlBox);
+  cb->move(0,30);
+
+  QPushButton * executeGraspButton = new QPushButton("execute Grasp", controlBox );
+  executeGraspButton->setDefault(true);
+  executeGraspButton->move(0,60);
+
   controlBox->resize(QSize(200,100));
   controlBox->show();
 
   QObject::connect(sendPlanningSceneButton, SIGNAL(clicked()), this, SLOT(onSendPlanningSceneButtonPressed()));
+  QObject::connect(executeGraspButton, SIGNAL(clicked()), this, SLOT(onExecuteGraspButtonPressed()));
+
+  QObject::connect(cb, SIGNAL(activated()), this, SLOT(fillComboBox()));
 
   ROS_INFO("ROS GraspIt node ready");
   return 0;
@@ -146,7 +155,20 @@ int RosGraspitInterface::mainLoop()
 
 void RosGraspitInterface::onSendPlanningSceneButtonPressed()
 {
+
     mPlanningSceneBuilder->uploadPlanningSceneToMoveit();
+
+    cb->clear();
+    for(int i = 0; i < graspItGUI->getMainWorld()->getNumGB(); i++)
+    {
+        cb->addItem(graspItGUI->getMainWorld()->getGB(i)->getName());
+    }
+}
+
+void RosGraspitInterface::onExecuteGraspButtonPressed()
+{
+    int gb_index = cb->currentIndex();
+    mPickupActionGoalBuilder->sendPickupRequest(gb_index);
 }
 
 

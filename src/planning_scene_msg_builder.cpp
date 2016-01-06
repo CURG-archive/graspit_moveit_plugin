@@ -64,15 +64,6 @@ void PlanningSceneMsgBuilder::uploadPlanningSceneToMoveit()
     createCollisionMesh(selected_body, collision_obj);
     collision_objects.push_back(collision_obj);
 
-    /*int numBodies = graspItGUI->getMainWorld()->getNumGB();
-
-    for(int i =0; i < numBodies; i++)
-    {
-        Body *b = graspItGUI->getMainWorld()->getGB(i);
-        moveit_msgs::CollisionObject collision_obj;
-        createCollisionMesh(b, collision_obj);
-        collision_objects.push_back(collision_obj);
-    }*/
     planning_scene_interface.addCollisionObjects(collision_objects);
 }
 

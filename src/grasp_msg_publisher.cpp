@@ -15,6 +15,7 @@ GraspMsgPublisher::GraspMsgPublisher(ros::NodeHandle *n)
 void GraspMsgPublisher::sendPickupRequest(int gb_index)
 {
      GraspPlanningState *gps = new GraspPlanningState(graspItGUI->getMainWorld()->getCurrentHand());
+
      GraspableBody *b = graspItGUI->getMainWorld()->getGB(gb_index);
      gps->setObject(b);
 
@@ -34,7 +35,10 @@ void GraspMsgPublisher::sendPickupRequest(int gb_index)
         grasp.pre_grasp_dof.push_back(dof[i]);
      }
 
-     transf finalHandTransform = gps->readPosition()->getCoreTran();
+     transf hand_in_world_frame =  graspItGUI->getMainWorld()->getCurrentHand()->getTran();
+     transf body_in_world_frame = graspItGUI->getMainWorld()->getGB(gb_index)->getTran();
+
+     transf finalHandTransform = hand_in_world_frame * body_in_world_frame.inverse();
 
      float tx = finalHandTransform.translation().x() / 1000;
      float ty = finalHandTransform.translation().y() / 1000;
@@ -53,7 +57,9 @@ void GraspMsgPublisher::sendPickupRequest(int gb_index)
      grasp.final_grasp_pose.orientation.z=rz;
 
      double moveDist = -50.0;
-     transf pregraspHandTransform = (translate_transf(vec3(0,0,moveDist) * gps->getHand()->getApproachTran()) * gps->readPosition()->getCoreTran());
+
+     transf pregraspHandTransform = (translate_transf(vec3(0,0,moveDist) * gps->getHand()->getApproachTran()) * finalHandTransform);
+
      tx = pregraspHandTransform.translation().x() / 1000;
      ty = pregraspHandTransform.translation().y() / 1000;
      tz = pregraspHandTransform.translation().z() / 1000;

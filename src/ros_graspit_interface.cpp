@@ -66,13 +66,13 @@ namespace graspit_ros_planning
 {
 
 
-RosGraspitInterface::RosGraspitInterface() :
+RosGraspitMoveitInterface::RosGraspitMoveitInterface() :
     root_nh_(NULL),
     priv_nh_(NULL)
 {
 }
 
-RosGraspitInterface::~RosGraspitInterface()
+RosGraspitMoveitInterface::~RosGraspitMoveitInterface()
 {
   ROS_INFO("ROS GraspIt node stopping");
   ros::shutdown();
@@ -82,7 +82,7 @@ RosGraspitInterface::~RosGraspitInterface()
 
 //------------------------- Main class  -------------------------------
 
-int RosGraspitInterface::init(int argc, char **argv)
+int RosGraspitMoveitInterface::init(int argc, char **argv)
 {
   std::cout << "ThreadId" <<std::this_thread::get_id() << std::endl;
   //copy the arguments somewhere else so we can pass them to ROS
@@ -147,13 +147,13 @@ int RosGraspitInterface::init(int argc, char **argv)
   return 0;
 }
 
-int RosGraspitInterface::mainLoop()
+int RosGraspitMoveitInterface::mainLoop()
 {
   ros::spinOnce();
   return 0;
 }
 
-void RosGraspitInterface::onSendPlanningSceneButtonPressed()
+void RosGraspitMoveitInterface::onSendPlanningSceneButtonPressed()
 {
 
     mPlanningSceneBuilder->uploadPlanningSceneToMoveit();
@@ -165,7 +165,7 @@ void RosGraspitInterface::onSendPlanningSceneButtonPressed()
     }
 }
 
-void RosGraspitInterface::onExecuteGraspButtonPressed()
+void RosGraspitMoveitInterface::onExecuteGraspButtonPressed()
 {
     int gb_index = cb->currentIndex();
     mPickupActionGoalBuilder->sendPickupRequest(gb_index);

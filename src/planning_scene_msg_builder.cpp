@@ -56,10 +56,13 @@ void PlanningSceneMsgBuilder::uploadPlanningSceneToMoveit()
 
     for(int i =0; i < numBodies; i++)
     {
-        Body *b = graspItGUI->getMainWorld()->getGB(i);
-        moveit_msgs::CollisionObject collision_obj;
-        createCollisionMesh(b, collision_obj);
-        collision_objects.push_back(collision_obj);
+
+            Body *b = graspItGUI->getMainWorld()->getGB(i);
+            moveit_msgs::CollisionObject collision_obj;
+            createCollisionMesh(b, collision_obj);
+            collision_objects.push_back(collision_obj);
+
+
     }
     planning_scene_interface.addCollisionObjects(collision_objects);
 }
@@ -69,7 +72,7 @@ void PlanningSceneMsgBuilder::uploadPlanningSceneToMoveit()
 bool PlanningSceneMsgBuilder::createCollisionMesh(Body *b, moveit_msgs::CollisionObject &collision_obj)
 {
   collision_obj.header.stamp = ros::Time::now();
-  collision_obj.header.frame_id = QString("base_link").toStdString();
+  collision_obj.header.frame_id = QString("camera_depth_optical_frame").toStdString();
   collision_obj.id = b->getName().toStdString();
   collision_obj.operation = moveit_msgs::CollisionObject::ADD;
 

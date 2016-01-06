@@ -68,7 +68,7 @@ namespace graspit_ros_planning
 
   In particular, note that this class uses the mainLoop() function to perform the ROS event management calls.
 */
-class RosGraspitInterface : public QObject, public Plugin
+class RosGraspitMoveitInterface : public QObject, public Plugin
 {
 
     Q_OBJECT
@@ -86,9 +86,9 @@ private:
 
 public:
   //! Inits ROS, but (for now) without passing any arguments
-  RosGraspitInterface();
+  RosGraspitMoveitInterface();
   //! Deletes the node handle and the db manager
-  ~RosGraspitInterface();
+  ~RosGraspitMoveitInterface();
   //! Creates the node handles, advertises services, connects to the database
   virtual int init(int argc, char **argv);
   //! Simply calls ros::spinOnce() to process the ROS event loop

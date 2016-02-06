@@ -54,6 +54,7 @@
    <build_depend>geometry_msgs</build_depend>
    <build_depend>sensor_msgs</build_depend>
    <build_depend>manipulation_msgs</build_depend>
+   <build_depend>graspit_msgs</build_depend>
    <build_depend>graspit</build_depend>
    <build_depend>graspit_ros_planning_msgs</build_depend>
 

@@ -48,7 +48,6 @@
 #include <include/graspitGUI.h>
 #include <include/ivmgr.h>
 #include <include/scanSimulator.h>
-#include <include/pr2Gripper.h>
 
 #include <sensor_msgs/PointCloud.h>
 #include <sensor_msgs/point_cloud_conversion.h>

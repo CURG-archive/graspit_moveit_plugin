@@ -71,33 +71,33 @@ void PlanningSceneMsgBuilder::uploadPlanningSceneToMoveit()
 
 bool PlanningSceneMsgBuilder::createCollisionMesh(Body *b, moveit_msgs::CollisionObject &collision_obj)
 {
-  collision_obj.header.stamp = ros::Time::now();
-  collision_obj.header.frame_id = QString("camera_depth_optical_frame").toStdString();
-  collision_obj.id = b->getName().toStdString();
-  collision_obj.operation = moveit_msgs::CollisionObject::ADD;
+    collision_obj.header.stamp = ros::Time::now();
+    collision_obj.header.frame_id = QString("camera_depth_optical_frame").toStdString();
+    collision_obj.id = b->getName().toStdString();
+    collision_obj.operation = moveit_msgs::CollisionObject::ADD;
 
-  std::vector<position> vertices;
-  b->getGeometryVertices(&vertices);
+    std::vector<position> vertices;
+    b->getGeometryVertices(&vertices);
 
-  std::vector<Triangle> triangles;
-  b->getGeometryTriangles(&triangles);
+    std::vector<Triangle> triangles;
+    b->getGeometryTriangles(&triangles);
 
-  shape_msgs::Mesh mesh;
-  meshToMeshMsg(mesh, &vertices, &triangles);
+    shape_msgs::Mesh mesh;
+    meshToMeshMsg(mesh, &vertices, &triangles);
 
-  collision_obj.meshes.push_back(mesh);
+    collision_obj.meshes.push_back(mesh);
 
-  transf t = b->getTran();
-  geometry_msgs::Pose mesh_pose = geometry_msgs::Pose();
+    transf t = b->getTran();
+    geometry_msgs::Pose mesh_pose = geometry_msgs::Pose();
 
-  mesh_pose.position.x = t.translation().x() / 1000.0;
-  mesh_pose.position.y = t.translation().y() / 1000.0;;
-  mesh_pose.position.z = t.translation().z() / 1000.0;;
-  mesh_pose.orientation.w = t.rotation().w;
-  mesh_pose.orientation.x = t.rotation().x;
-  mesh_pose.orientation.y = t.rotation().y;
-  mesh_pose.orientation.z = t.rotation().z;
-  collision_obj.mesh_poses.push_back(mesh_pose);
+    mesh_pose.position.x = t.translation().x() / 1000.0;
+    mesh_pose.position.y = t.translation().y() / 1000.0;;
+    mesh_pose.position.z = t.translation().z() / 1000.0;;
+    mesh_pose.orientation.w = t.rotation().w;
+    mesh_pose.orientation.x = t.rotation().x;
+    mesh_pose.orientation.y = t.rotation().y;
+    mesh_pose.orientation.z = t.rotation().z;
+    collision_obj.mesh_poses.push_back(mesh_pose);
 
 }
 

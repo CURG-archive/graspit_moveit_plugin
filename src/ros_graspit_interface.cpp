@@ -34,142 +34,120 @@
 
 #include "include/ros_graspit_interface.h"
 
-#include <boost/foreach.hpp>
-#include <cmath>
-#include <Inventor/actions/SoGetBoundingBoxAction.h>
+/* #include <boost/foreach.hpp> */
+/* #include <cmath> */
+/* #include <Inventor/actions/SoGetBoundingBoxAction.h> */
 
-#include <src/DBase/DBPlanner/ros_database_manager.h>
-#include <src/DBase/graspit_db_model.h>
-#include <src/Collision/collisionStructures.h>
+/* #include <src/DBase/DBPlanner/ros_database_manager.h> */
+/* #include <src/DBase/graspit_db_model.h> */
+/* #include <src/Collision/collisionStructures.h> */
 
-#include <include/mytools.h>
+/* #include <include/mytools.h> */
 #include <include/world.h>
 #include <include/body.h>
 #include <include/graspitGUI.h>
 #include <include/ivmgr.h>
-#include <include/scanSimulator.h>
-
-#include <sensor_msgs/PointCloud.h>
-#include <sensor_msgs/point_cloud_conversion.h>
-#include <include/EGPlanner/egPlanner.h>
-#include <include/EGPlanner/simAnnPlanner.h>
-
-#include <include/grasp.h>
-#include <include/triangle.h>
-#include <geometry_msgs/Point.h>
-
-#include <thread>
 
 
 namespace graspit_ros_planning
 {
-
-
-RosGraspitMoveitInterface::RosGraspitMoveitInterface() :
-    root_nh_(NULL),
-    priv_nh_(NULL)
-{
-}
-
-RosGraspitMoveitInterface::~RosGraspitMoveitInterface()
-{
-  ROS_INFO("ROS GraspIt node stopping");
-  ros::shutdown();
-  delete root_nh_;
-  delete priv_nh_;
-}
-
-//------------------------- Main class  -------------------------------
-
-int RosGraspitMoveitInterface::init(int argc, char **argv)
-{
-  std::cout << "ThreadId" <<std::this_thread::get_id() << std::endl;
-  //copy the arguments somewhere else so we can pass them to ROS
-  int ros_argc = argc;
-  char** ros_argv = new char*[argc];
-  for (int i = 0; i < argc; i++)
-  {
-    ros_argv[i] = new char[strlen(argv[i])];
-    strcpy(ros_argv[i], argv[i]);
-  }
-  //see if a node name was requested
-  std::string node_name("ros_graspit_interface");
-  for (int i = 0; i < argc - 1; i++)
-  {
-    //std::cerr << argv[i] << "\n";
-    if (!strcmp(argv[i], "_name"))
+    RosGraspitMoveitInterface::RosGraspitMoveitInterface() :
+        root_nh_(NULL),
+        priv_nh_(NULL)
     {
-      node_name = argv[i + 1];
     }
-  }
-  //init ros
-  ros::init(ros_argc, ros_argv, node_name.c_str());
 
-  //init node handles
-  root_nh_ = new ros::NodeHandle("");
-  priv_nh_ = new ros::NodeHandle("~");
-
-  mPlanningSceneBuilder = new PlanningSceneMsgBuilder();
-  mPickupActionGoalBuilder = new GraspMsgPublisher(root_nh_);
-
-  ROS_INFO("Using node name %s", node_name.c_str());
-  for (int i = 0; i < argc; i++)
-  {
-    delete ros_argv[i];
-  }
-  delete ros_argv;
-
-  ROS_INFO("MAKING SHAPE COMPLETION UI");
-
-  QDialogButtonBox *controlBox = new QDialogButtonBox(Qt::Vertical);
-
-  QPushButton * sendPlanningSceneButton = new QPushButton("send Scene", controlBox);
-  sendPlanningSceneButton->setDefault(true);
-  sendPlanningSceneButton->move(0,0);
-
-  cb = new QComboBox(controlBox);
-  cb->move(0,30);
-
-  QPushButton * executeGraspButton = new QPushButton("execute Grasp", controlBox );
-  executeGraspButton->setDefault(true);
-  executeGraspButton->move(0,60);
-
-  controlBox->resize(QSize(200,100));
-  controlBox->show();
-
-  QObject::connect(sendPlanningSceneButton, SIGNAL(clicked()), this, SLOT(onSendPlanningSceneButtonPressed()));
-  QObject::connect(executeGraspButton, SIGNAL(clicked()), this, SLOT(onExecuteGraspButtonPressed()));
-
-  QObject::connect(cb, SIGNAL(activated()), this, SLOT(fillComboBox()));
-
-  ROS_INFO("ROS GraspIt node ready");
-  return 0;
-}
-
-int RosGraspitMoveitInterface::mainLoop()
-{
-  ros::spinOnce();
-  return 0;
-}
-
-void RosGraspitMoveitInterface::onSendPlanningSceneButtonPressed()
-{
-
-    mPlanningSceneBuilder->uploadPlanningSceneToMoveit();
-
-    cb->clear();
-    for(int i = 0; i < graspItGUI->getMainWorld()->getNumGB(); i++)
+    RosGraspitMoveitInterface::~RosGraspitMoveitInterface()
     {
-        cb->addItem(graspItGUI->getMainWorld()->getGB(i)->getName());
+        ROS_INFO("ROS GraspIt node stopping");
+        ros::shutdown();
+        delete root_nh_;
+        delete priv_nh_;
     }
-}
 
-void RosGraspitMoveitInterface::onExecuteGraspButtonPressed()
-{
-    int gb_index = cb->currentIndex();
-    mPickupActionGoalBuilder->sendPickupRequest(gb_index);
-}
+    //------------------------- Main class  -------------------------------
 
+    int RosGraspitMoveitInterface::init(int argc, char **argv)
+    {
+        //copy the arguments somewhere else so we can pass them to ROS
+        int ros_argc = argc;
+        char** ros_argv = new char*[argc];
+        for (int i = 0; i < argc; i++)
+        {
+            ros_argv[i] = argv[i];
+        }
+        //see if a node name was requested
+        std::string node_name("ros_graspit_interface");
+        for (int i = 0; i < argc - 1; i++)
+        {
+            //std::cerr << argv[i] << "\n";
+            if (!strcmp(argv[i], "_name"))
+            {
+                node_name = argv[i + 1];
+            }
+        }
+        //init ros
+        ros::init(ros_argc, ros_argv, node_name.c_str());
 
+        /* //init node handles */
+        root_nh_ = new ros::NodeHandle("");
+        priv_nh_ = new ros::NodeHandle("~");
+
+        mPlanningSceneBuilder = new PlanningSceneMsgBuilder();
+        mPickupActionGoalBuilder = new GraspMsgPublisher(root_nh_);
+
+        ROS_INFO("Using node name %s", node_name.c_str());
+        delete ros_argv;
+
+        ROS_INFO("Initializing Graspit-MoveIt! UI");
+
+        QDialogButtonBox *controlBox = new QDialogButtonBox(Qt::Vertical);
+
+        QPushButton * sendPlanningSceneButton = new QPushButton("send Scene", controlBox);
+        sendPlanningSceneButton->setDefault(true);
+        sendPlanningSceneButton->move(0,0);
+
+        cb = new QComboBox(controlBox);
+        cb->move(0,30);
+
+        QPushButton * executeGraspButton = new QPushButton("execute Grasp", controlBox );
+        executeGraspButton->setDefault(true);
+        executeGraspButton->move(0,60);
+
+        controlBox->resize(QSize(200,100));
+        controlBox->show();
+
+        QObject::connect(sendPlanningSceneButton, SIGNAL(clicked()), this, SLOT(onSendPlanningSceneButtonPressed()));
+        QObject::connect(executeGraspButton, SIGNAL(clicked()), this, SLOT(onExecuteGraspButtonPressed()));
+
+        QObject::connect(cb, SIGNAL(activated()), this, SLOT(fillComboBox()));
+
+        ROS_INFO("ROS GraspIt node ready");
+        return 0;
+    }
+
+    int RosGraspitMoveitInterface::mainLoop()
+    {
+        ros::spinOnce();
+        return 0;
+    }
+
+    void RosGraspitMoveitInterface::onSendPlanningSceneButtonPressed()
+    {
+
+        mPlanningSceneBuilder->uploadPlanningSceneToMoveit();
+
+        cb->clear();
+        for(int i = 0; i < graspItGUI->getMainWorld()->getNumGB(); i++)
+        {
+            cb->addItem(graspItGUI->getMainWorld()->getGB(i)->getName());
+        }
+    }
+
+    void RosGraspitMoveitInterface::onExecuteGraspButtonPressed()
+    {
+        int gb_index = cb->currentIndex();
+        mPickupActionGoalBuilder->sendPickupRequest(gb_index);
+    }
 
 }

@@ -14,67 +14,67 @@ GraspMsgPublisher::GraspMsgPublisher(ros::NodeHandle *n)
 
 void GraspMsgPublisher::sendPickupRequest(int gb_index)
 {
-     GraspPlanningState *gps = new GraspPlanningState(graspItGUI->getMainWorld()->getCurrentHand());
+    GraspPlanningState *gps = new GraspPlanningState(graspItGUI->getMainWorld()->getCurrentHand());
 
-     GraspableBody *b = graspItGUI->getMainWorld()->getGB(gb_index);
-     gps->setObject(b);
+    GraspableBody *b = graspItGUI->getMainWorld()->getGB(gb_index);
+    gps->setObject(b);
 
-     graspit_msgs::Grasp grasp;
-     grasp.object_name = b->getName().toStdString().c_str();
+    graspit_msgs::Grasp grasp;
+    grasp.object_name = b->getName().toStdString().c_str();
 
-     grasp.epsilon_quality=0;
-     grasp.volume_quality=0;
-     grasp.grasp_id=1;
+    grasp.epsilon_quality=0;
+    grasp.volume_quality=0;
+    grasp.grasp_id=1;
 
 
-     double dof[gps->getHand()->getNumDOF()];
-     gps->getHand()->getDOFVals(dof);
-     for(int i = 0; i < gps->getHand()->getNumDOF(); ++i)
-     {
+    double dof[gps->getHand()->getNumDOF()];
+    gps->getHand()->getDOFVals(dof);
+    for(int i = 0; i < gps->getHand()->getNumDOF(); ++i)
+    {
         grasp.final_grasp_dof.push_back(dof[i]);
         grasp.pre_grasp_dof.push_back(dof[i]);
-     }
+    }
 
-     transf hand_in_world_frame =  graspItGUI->getMainWorld()->getCurrentHand()->getTran();
-     transf body_in_world_frame = graspItGUI->getMainWorld()->getGB(gb_index)->getTran();
+    transf hand_in_world_frame =  graspItGUI->getMainWorld()->getCurrentHand()->getTran();
+    transf body_in_world_frame = graspItGUI->getMainWorld()->getGB(gb_index)->getTran();
 
-     transf finalHandTransform = hand_in_world_frame * body_in_world_frame.inverse();
+    transf finalHandTransform = hand_in_world_frame * body_in_world_frame.inverse();
 
-     float tx = finalHandTransform.translation().x() / 1000;
-     float ty = finalHandTransform.translation().y() / 1000;
-     float tz = finalHandTransform.translation().z() / 1000;
-     float rw = finalHandTransform.rotation().w;
-     float rx = finalHandTransform.rotation().x;
-     float ry = finalHandTransform.rotation().y;
-     float rz = finalHandTransform.rotation().z;
+    float tx = finalHandTransform.translation().x() / 1000;
+    float ty = finalHandTransform.translation().y() / 1000;
+    float tz = finalHandTransform.translation().z() / 1000;
+    float rw = finalHandTransform.rotation().w;
+    float rx = finalHandTransform.rotation().x;
+    float ry = finalHandTransform.rotation().y;
+    float rz = finalHandTransform.rotation().z;
 
-     grasp.final_grasp_pose.position.x=tx ;
-     grasp.final_grasp_pose.position.y=ty;
-     grasp.final_grasp_pose.position.z=tz;
-     grasp.final_grasp_pose.orientation.w=rw;
-     grasp.final_grasp_pose.orientation.x=rx;
-     grasp.final_grasp_pose.orientation.y=ry;
-     grasp.final_grasp_pose.orientation.z=rz;
+    grasp.final_grasp_pose.position.x=tx ;
+    grasp.final_grasp_pose.position.y=ty;
+    grasp.final_grasp_pose.position.z=tz;
+    grasp.final_grasp_pose.orientation.w=rw;
+    grasp.final_grasp_pose.orientation.x=rx;
+    grasp.final_grasp_pose.orientation.y=ry;
+    grasp.final_grasp_pose.orientation.z=rz;
 
-     double moveDist = -50.0;
+    double moveDist = -50.0;
 
-     transf pregraspHandTransform = (translate_transf(vec3(0,0,moveDist) * gps->getHand()->getApproachTran()) * finalHandTransform);
+    transf pregraspHandTransform = (translate_transf(vec3(0,0,moveDist) * gps->getHand()->getApproachTran()) * finalHandTransform);
 
-     tx = pregraspHandTransform.translation().x() / 1000;
-     ty = pregraspHandTransform.translation().y() / 1000;
-     tz = pregraspHandTransform.translation().z() / 1000;
-     rw = pregraspHandTransform.rotation().w;
-     rx = pregraspHandTransform.rotation().x;
-     ry = pregraspHandTransform.rotation().y;
-     rz = pregraspHandTransform.rotation().z;
+    tx = pregraspHandTransform.translation().x() / 1000;
+    ty = pregraspHandTransform.translation().y() / 1000;
+    tz = pregraspHandTransform.translation().z() / 1000;
+    rw = pregraspHandTransform.rotation().w;
+    rx = pregraspHandTransform.rotation().x;
+    ry = pregraspHandTransform.rotation().y;
+    rz = pregraspHandTransform.rotation().z;
 
-     grasp.pre_grasp_pose.position.x=tx;
-     grasp.pre_grasp_pose.position.y=ty;
-     grasp.pre_grasp_pose.position.z=tz;
-     grasp.pre_grasp_pose.orientation.w=rw;
-     grasp.pre_grasp_pose.orientation.x=rx;
-     grasp.pre_grasp_pose.orientation.y=ry;
-     grasp.pre_grasp_pose.orientation.z=rz;
+    grasp.pre_grasp_pose.position.x=tx;
+    grasp.pre_grasp_pose.position.y=ty;
+    grasp.pre_grasp_pose.position.z=tz;
+    grasp.pre_grasp_pose.orientation.w=rw;
+    grasp.pre_grasp_pose.orientation.x=rx;
+    grasp.pre_grasp_pose.orientation.y=ry;
+    grasp.pre_grasp_pose.orientation.z=rz;
 
-     grasp_pubisher.publish(grasp);
- }
+    grasp_pubisher.publish(grasp);
+}

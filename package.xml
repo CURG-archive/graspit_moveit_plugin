@@ -63,6 +63,7 @@
    <run_depend>sensor_msgs</run_depend>
    <run_depend>manipulation_msgs</run_depend>
    <run_depend>graspit</run_depend>
+   <run_depend>graspit_msgs</run_depend>
    <run_depend>graspit_ros_planning_msgs</run_depend>
 
 

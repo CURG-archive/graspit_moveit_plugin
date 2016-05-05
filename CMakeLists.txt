@@ -152,6 +152,7 @@ include_directories("${CMAKE_BINARY_DIR}")
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 add_dependencies(ros_graspit_moveit_interface graspit ${QT_DEFINITIONS})
+add_dependencies(ros_graspit_moveit_interface ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(ros_graspit_moveit_interface
